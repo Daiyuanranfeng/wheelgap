@@ -20,7 +20,16 @@ from pathlib import Path
 from .check import Row, Status, check, status_for, wheel_tags
 from .pypi import fill_all
 from .sources import Package, Source, find_lockfile, load_file
-from .targets import DEFAULT_GLIBC, DEFAULT_MACOS, DEFAULT_MUSL, DEFAULT_PLATFORMS, Target, build_targets
+from .targets import (
+    DEFAULT_ANDROID_API,
+    DEFAULT_GLIBC,
+    DEFAULT_IOS,
+    DEFAULT_MACOS,
+    DEFAULT_MUSL,
+    DEFAULT_PLATFORMS,
+    Target,
+    build_targets,
+)
 
 _OK = (Status.WHEEL, Status.NOT_NEEDED, Status.BUNDLED)
 
@@ -38,13 +47,15 @@ def make_targets(
     glibc: str = DEFAULT_GLIBC,
     musl: str = DEFAULT_MUSL,
     macos: str = DEFAULT_MACOS,
+    ios: str = DEFAULT_IOS,
+    android_api: str | int = DEFAULT_ANDROID_API,
 ) -> list[Target]:
-    """Targets from the same names the CLI takes: python="3.13,3.14t", platforms=["all", "pyodide"]."""
+    """Targets from the same names the CLI takes: python="3.13,3.14t", platforms=["all", "pyodide", "mobile"]."""
     pythons = [python] if isinstance(python, str) else list(python or [running_python()])
     plats = [platforms] if isinstance(platforms, str) else list(platforms or DEFAULT_PLATFORMS)
-    return build_targets(pythons, plats, glibc, musl, macos) or build_targets(
-        [running_python()], plats, glibc, musl, macos
-    )
+    if not any(p.strip() for item in pythons for p in item.split(",")):
+        pythons = [running_python()]
+    return build_targets(pythons, plats, glibc, musl, macos, ios, android_api)
 
 
 @dataclass(frozen=True)

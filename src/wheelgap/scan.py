@@ -102,7 +102,10 @@ def report(
 
 
 def positive_int(value: str) -> int:
-    number = int(value)
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError("must be a positive integer") from None
     if number < 1:
         raise argparse.ArgumentTypeError("must be a positive integer")
     return number

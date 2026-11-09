@@ -24,6 +24,11 @@ def test_make_targets_uses_running_python_for_empty_input(python):
     assert wheelgap.make_targets(python=python) == wheelgap.make_targets()
 
 
+def test_make_targets_empty_python_keeps_other_options():
+    kwargs = dict(platforms="linux-x86_64", glibc="2.28")
+    assert wheelgap.make_targets(python="", **kwargs) == wheelgap.make_targets(**kwargs)
+
+
 def test_package_checks_reject_empty_targets_before_lookup(fake_pypi):
     with pytest.raises(ValueError, match="at least one target"):
         wheelgap.check_packages(["purewheel"], targets=[])

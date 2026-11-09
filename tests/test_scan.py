@@ -31,6 +31,8 @@ def test_scan_targets_removes_duplicate_versions_in_order():
         ("--top", "0", "must be a positive integer"),
         ("--workers", "0", "must be a positive integer"),
         ("--workers", "-1", "must be a positive integer"),
+        ("--top", "1.5", "must be a positive integer"),
+        ("--workers", "abc", "must be a positive integer"),
         ("--python", " , ", "provide at least one Python version"),
         ("--python", "invalid", "can't parse Python version"),
     ],
